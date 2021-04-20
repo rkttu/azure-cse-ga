@@ -54,5 +54,4 @@ jobs:
             #$cscfgToken = New-AzStorageBlobSASToken -Container "contosocontainer" -Blob $cscfgBlob.Name -Permission rwd -StartTime $tokenStartTime -ExpiryTime $tokenEndTime -Context $storageAccount.Context 
             #$cscfgUrl = $cscfgBlob.ICloudBlob.Uri.AbsoluteUri + $cscfgToken
             #Test
-
           azPSVersion: 'latest'
