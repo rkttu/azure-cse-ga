@@ -1,0 +1,58 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the action will run. 
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: windows-2019
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - name: Login via Az module
+        uses: azure/login@v1
+        with:
+          creds: ${{secrets.AZURE_CREDENTIALS}}
+          enable-AzPSSession: true 
+      
+      - name: Build cspkg and cscfg file
+        with:
+          shell: pwsh
+          inlineScript: |
+            dir
+            # TODO: Invoke msbuild and generate cspkg and cscfg
+
+      - name: Run Azure PowerShell script
+        uses: azure/powershell@v1
+        with:
+          shell: pwsh
+          inlineScript: |
+            Install-Module -Name Az.CloudService
+
+            $tokenStartTime = Get-Date 
+            $tokenEndTime = $tokenStartTime.AddYears(1) 
+            #$cspkgBlob = Set-AzStorageBlobContent -File "./ContosoApp/ContosoApp.cspkg" -Container "contosocontainer" -Blob "ContosoApp.cspkg" -Context $storageAccount.Context 
+            #$cspkgToken = New-AzStorageBlobSASToken -Container "contosocontainer" -Blob $cspkgBlob.Name -Permission rwd -StartTime $tokenStartTime -ExpiryTime $tokenEndTime -Context $storageAccount.Context 
+            #$cspkgUrl = $cspkgBlob.ICloudBlob.Uri.AbsoluteUri + $cspkgToken
+
+            #$cscfgBlob = Set-AzStorageBlobContent -File "./ContosoApp/ContosoApp.cscfg" -Container contosocontainer -Blob "ContosoApp.cscfg" -Context $storageAccount.Context 
+            #$cscfgToken = New-AzStorageBlobSASToken -Container "contosocontainer" -Blob $cscfgBlob.Name -Permission rwd -StartTime $tokenStartTime -ExpiryTime $tokenEndTime -Context $storageAccount.Context 
+            #$cscfgUrl = $cscfgBlob.ICloudBlob.Uri.AbsoluteUri + $cscfgToken
+
+          azPSVersion: 'latest'
